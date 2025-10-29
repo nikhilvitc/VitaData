@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { TrendingUp, DollarSign, Target, Users, Building2, Smartphone, BarChart3, Sparkles } from 'lucide-react'
+import { TrendingUp, DollarSign, Target, Users, Building, Smartphone, BarChart, Sparkles } from 'lucide-react'
 
 const marketData = [
   { label: 'TAM', value: '$12B', desc: 'Total Addressable Market', percentage: 100, color: 'from-blue-500 to-cyan-600' },
@@ -10,7 +10,7 @@ const marketData = [
 
 const revenueStreams = [
   { 
-    icon: Building2, 
+    icon: Building, 
     title: 'Hospital Subscriptions', 
     desc: 'Tiered pricing: Basic, Professional, Enterprise',
     highlight: 'Primary Revenue'
@@ -28,7 +28,7 @@ const revenueStreams = [
     highlight: 'Recurring Income'
   },
   { 
-    icon: BarChart3, 
+    icon: BarChart, 
     title: 'Analytics & Insights', 
     desc: 'Advanced reporting and predictive analytics add-ons',
     highlight: 'Value-Added'

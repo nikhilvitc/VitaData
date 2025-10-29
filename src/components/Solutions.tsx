@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { DollarSign, Lock, Database, BarChart3, Truck, Cloud, Smartphone, HeartPulse } from 'lucide-react'
+import { DollarSign, Lock, Database, BarChart, Truck, Cloud, Smartphone, Heart } from 'lucide-react'
 
 const features = [
   { 
@@ -27,7 +27,7 @@ const features = [
   { 
     title: 'Advanced Analytics', 
     desc: 'AI-powered insights and predictive analytics to improve patient outcomes and operational efficiency',
-    icon: BarChart3,
+    icon: BarChart,
     color: 'from-orange-500 to-red-600',
     badge: 'AI-Powered'
   },
@@ -55,7 +55,7 @@ const features = [
   { 
     title: 'Patient Engagement Tools', 
     desc: 'Automated reminders, health tracking, and telemedicine features for better adherence',
-    icon: HeartPulse,
+    icon: Heart,
     color: 'from-rose-500 to-pink-600',
     badge: 'Engaging'
   }
@@ -72,7 +72,7 @@ export default function Solutions(){
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
-            <HeartPulse className="w-4 h-4" />
+            <Heart className="w-4 h-4" />
             Our Solutions
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
@@ -134,7 +134,7 @@ export default function Solutions(){
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-sky-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
           >
             Request a Demo
-            <BarChart3 className="w-5 h-5" />
+            <BarChart className="w-5 h-5" />
           </a>
         </motion.div>
       </div>

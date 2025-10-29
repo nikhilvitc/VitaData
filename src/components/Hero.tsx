@@ -1,12 +1,12 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { User, Users, Stethoscope, PillBottle, ArrowRight, CheckCircle2, Calendar, Shield, Zap, Heart } from 'lucide-react'
+import { User, Users, Stethoscope, Pill, ArrowRight, CheckCircle, Calendar, Shield, Zap, Heart } from 'lucide-react'
 
 const categories = [
   { title: 'Patients', icon: User, color: 'from-sky-500 to-blue-600', borderColor: 'border-sky-400', route: '/patient' },
   { title: 'Guardians', icon: Users, color: 'from-amber-500 to-orange-600', borderColor: 'border-amber-400', route: '/guardian' },
   { title: 'Doctors', icon: Stethoscope, color: 'from-emerald-500 to-green-600', borderColor: 'border-emerald-400', route: '/doctor' },
-  { title: 'Pharmacies', icon: PillBottle, color: 'from-purple-500 to-indigo-600', borderColor: 'border-purple-400', route: '/pharmacy' }
+  { title: 'Pharmacies', icon: Pill, color: 'from-purple-500 to-indigo-600', borderColor: 'border-purple-400', route: '/pharmacy' }
 ]
 
 const features = [
@@ -109,7 +109,7 @@ export default function Hero() {
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gradient-to-br from-white to-sky-50 rounded-2xl shadow-lg p-8 border border-sky-100">
             <h3 className="text-2xl font-bold text-sky-900 mb-6 flex items-center gap-3">
-              <CheckCircle2 className="w-7 h-7 text-sky-600" />
+              <CheckCircle className="w-7 h-7 text-sky-600" />
               What VitaData Offers
             </h3>
             <ul className="space-y-4">
