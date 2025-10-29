@@ -54,12 +54,12 @@ export default function Hero() {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-blue-600 to-purple-600 leading-tight">
-            Simplifying Healthcare Operations
+            Healthcare Simplified
           </h1>
           
           <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            VitaData connects patients, guardians, healthcare providers, and pharmacies in one secure, intelligent platform. 
-            Experience seamless appointments, digital health records, medicine delivery, and personalized care reminders.
+            One intelligent platform connecting patients, doctors, and pharmacies. 
+            Smart appointments, digital records, instant medicine delivery.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Heart, Mail, Phone, MapPin, Linkedin, Twitter, Github, Facebook } from 'lucide-react'
+import logoImage from '../assets/logo.jpeg'
 
 export default function Footer(){
   return (
@@ -9,9 +10,11 @@ export default function Footer(){
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-sky-400 to-blue-500 rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="VitaData Logo" 
+                className="h-16 w-16 rounded-full object-cover shadow-lg border-2 border-white/20"
+              />
               <div>
                 <div className="text-xl font-bold">VitaData</div>
                 <div className="text-xs text-blue-200">Healthcare Simplified</div>

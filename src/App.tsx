@@ -9,6 +9,7 @@ import Roadmap from './components/Roadmap'
 import Chatbot from './components/Chatbot'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import logoImage from './assets/logo.jpeg'
 
 export default function App() {
   const path = typeof window !== 'undefined' ? window.location.pathname : '/'
@@ -60,6 +61,15 @@ export default function App() {
     )
   }
 
+  if (path === '/database-test') {
+    const DatabaseTest = lazy(() => import('./pages/DatabaseTest'))
+    return (
+      <Suspense fallback={<div className="container py-12">Loading database test…</div>}>
+        <DatabaseTest />
+      </Suspense>
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200">
@@ -67,11 +77,11 @@ export default function App() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <a href="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
+              <img 
+                src={logoImage} 
+                alt="VitaData Logo" 
+                className="h-16 w-16 rounded-full object-cover shadow-lg border-2 border-sky-200 group-hover:scale-110 group-hover:shadow-xl transition-all"
+              />
               <div>
                 <div className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-600">VitaData</div>
                 <div className="text-xs text-slate-600">Healthcare Simplified</div>

@@ -124,48 +124,48 @@ export default function PatientDashboard() {
       <div className="max-w-7xl mx-auto px-6 py-6">
         {activeTab === 'overview' && (
           <>
-            {/* Quick Stats */}
+        {/* Quick Stats */}
             <div className="mb-8">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-blue-600" />
                 Health Overview
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="p-2 bg-red-50 rounded-lg">
-                      <Heart className="w-5 h-5 text-red-500" />
-                    </div>
-                    <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">Normal</span>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{patient?.vitals?.bp ?? '120/80'}</p>
-                  <p className="text-sm text-gray-500 mt-1">Blood Pressure</p>
-                </div>
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2 bg-red-50 rounded-lg">
+                <Heart className="w-5 h-5 text-red-500" />
+              </div>
+              <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">Normal</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{patient?.vitals?.bp ?? '120/80'}</p>
+            <p className="text-sm text-gray-500 mt-1">Blood Pressure</p>
+          </div>
 
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex items-center justify-between mb-3">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-3">
                     <div className="p-2 bg-purple-50 rounded-lg">
                       <Activity className="w-5 h-5 text-purple-500" />
-                    </div>
+              </div>
                     <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">Good</span>
-                  </div>
+            </div>
                   <p className="text-2xl font-bold text-gray-900">{patient?.vitals?.sugar ?? '95'}</p>
                   <p className="text-sm text-gray-500 mt-1">Blood Sugar (mg/dL)</p>
-                </div>
+          </div>
 
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="p-2 bg-orange-50 rounded-lg">
-                      <Activity className="w-5 h-5 text-orange-500" />
-                    </div>
-                    <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">Normal</span>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{patient?.vitals?.temp ?? '98.4'}°F</p>
-                  <p className="text-sm text-gray-500 mt-1">Temperature</p>
-                </div>
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Activity className="w-5 h-5 text-orange-500" />
+              </div>
+              <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">Normal</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{patient?.vitals?.temp ?? '98.4'}°F</p>
+            <p className="text-sm text-gray-500 mt-1">Temperature</p>
+          </div>
 
-                <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
-                  <div className="flex items-center justify-between mb-3">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-3">
                     <div className="p-2 bg-blue-50 rounded-lg">
                       <Pill className="w-5 h-5 text-blue-500" />
                     </div>
@@ -189,7 +189,7 @@ export default function PatientDashboard() {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* BP Trend */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                       <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <Heart className="w-4 h-4 text-red-500" />
                         Blood Pressure Trend
@@ -240,8 +240,8 @@ export default function PatientDashboard() {
                     <Pill className="w-5 h-5 text-blue-600" />
                     Weekly Medication Adherence
                   </h2>
-                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                    <div className="flex items-end gap-3 h-40 mb-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <div className="flex items-end gap-3 h-40 mb-4">
                       {adherenceData.map((d, i) => (
                         <div key={i} className="flex-1 flex flex-col items-center">
                           <div className="w-full bg-gradient-to-t from-blue-500 to-purple-500 rounded-t" style={{ height: `${d.value}%` }}></div>
@@ -259,7 +259,7 @@ export default function PatientDashboard() {
                         <p className="text-sm text-gray-600">Status</p>
                         <p className="text-lg font-semibold text-green-600">Excellent</p>
                       </div>
-                    </div>
+                  </div>
                   </div>
                 </div>
 
@@ -269,60 +269,37 @@ export default function PatientDashboard() {
                     <Calendar className="w-5 h-5 text-blue-600" />
                     Upcoming Appointments
                   </h2>
-                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                    <div className="space-y-3">
-                      {appointments.length ? (
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <div className="space-y-3">
+                    {appointments.length ? (
                         appointments.map((appt) => (
                           <div key={appt.id} className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100">
-                            <div className="p-3 bg-white rounded-lg shadow-sm">
-                              <Calendar className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <div className="flex-1">
+                          <div className="p-3 bg-white rounded-lg shadow-sm">
+                            <Calendar className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <div className="flex-1">
                               <p className="font-semibold text-gray-900">{appt.doctor}</p>
                               <p className="text-sm text-gray-600">{formatDatetime(appt.datetime)}</p>
                               <span className="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">{appt.status}</span>
-                            </div>
-                            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:shadow-lg transition">
-                              Join Call
-                            </button>
                           </div>
-                        ))
-                      ) : (
+                            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:shadow-lg transition">
+                            Join Call
+                          </button>
+                        </div>
+                      ))
+                    ) : (
                         <div className="text-center py-8 text-gray-500">
                           <Calendar className="w-12 h-12 mx-auto mb-2 text-gray-300" />
                           <p>No upcoming appointments</p>
                         </div>
-                      )}
-                    </div>
+                    )}
+                  </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Sidebar */}
               <div className="space-y-6">
-                {/* AI Health Assistant */}
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-blue-600" />
-                    AI Assistant
-                  </h2>
-                  <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 bg-white/20 backdrop-blur rounded-lg">
-                        <Activity className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">VitaBot</h3>
-                        <p className="text-xs text-blue-100">Your Health Companion</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-blue-50 mb-4">Ask me about your medications, symptoms, or health concerns!</p>
-                    <button className="w-full px-4 py-2 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition">
-                      Chat with VitaBot
-                    </button>
-                  </div>
-                </div>
-
                 {/* Quick Actions */}
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
