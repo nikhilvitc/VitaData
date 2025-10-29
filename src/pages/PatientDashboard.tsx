@@ -85,9 +85,9 @@ export default function PatientDashboard() {
       } catch (error) {
         console.error('Error loading data:', error)
         // Fallback to mock data
-        const p = getPatients()[0]
-        setPatient(p)
-        setAppointments(getAppointments().filter(a => a.patientId === (p?.id)))
+    const p = getPatients()[0]
+    setPatient(p)
+    setAppointments(getAppointments().filter(a => a.patientId === (p?.id)))
         setPrescriptions(getPrescriptions(p?.id))
       } finally {
         setLoading(false)
@@ -124,8 +124,8 @@ export default function PatientDashboard() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Patient Portal</h1>
-              <p className="text-sm text-gray-500 mt-1">Welcome back, {patient?.name ?? 'John'}</p>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Patient Portal</h1>
+              <p className="text-sm text-gray-700 mt-1">Welcome back, {patient?.name ?? 'John'}</p>
             </div>
             <div className="flex items-center gap-4">
               <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full transition">
@@ -435,29 +435,285 @@ export default function PatientDashboard() {
         )}
 
         {activeTab === 'health' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Health Records</h2>
+            
+            {loading ? (
           <div className="text-center py-20">
-            <Activity className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Health Records</h3>
-            <p className="text-gray-600">Your complete health history and medical records</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-blue-600 mb-4" />
+                <p className="text-gray-600">Loading health records...</p>
+              </div>
+            ) : (
+              <>
+                {/* Vitals History */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Heart className="w-5 h-5 text-blue-600" />
+                    Vitals History
+                  </h3>
+                  {vitalsHistory.length > 0 ? (
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Blood Pressure</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sugar (mg/dL)</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Temperature</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pulse</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight (kg)</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recorded By</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {vitalsHistory.map((vital) => (
+                              <tr key={vital.id} className="hover:bg-gray-50">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {formatDatetime(vital.recordedAt || new Date().toISOString())}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{vital.bp}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.sugar}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.temp}°F</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.pulse} bpm</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.weight} kg</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{vital.recordedBy || 'self'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                      <Activity className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                      <p className="text-gray-600">No vitals history available</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Lab Reports */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    Lab Reports
+                  </h3>
+                  {labReports.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-4">
+                      {labReports.map((report) => (
+                        <div key={report.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                          <div className="flex items-start justify-between mb-4">
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900">{report.testName}</h4>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Test Date: {formatDatetime(report.testDate || new Date().toISOString())}
+                              </p>
+                            </div>
+                          </div>
+                          {report.results && report.results.length > 0 && (
+                            <div className="space-y-2">
+                              {report.results.map((result: any, idx: number) => (
+                                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                  <div>
+                                    <p className="font-medium text-gray-900">{result.parameter}</p>
+                                    <p className="text-sm text-gray-600">{result.value} {result.unit}</p>
+                                  </div>
+                                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                    result.status === 'normal' 
+                                      ? 'bg-green-100 text-green-700' 
+                                      : 'bg-red-100 text-red-700'
+                                  }`}>
+                                    {result.status}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {report.notes && (
+                            <p className="text-sm text-gray-600 mt-4 italic">Notes: {report.notes}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                      <FileText className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                      <p className="text-gray-600">No lab reports available</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {activeTab === 'appointments' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Appointments</h2>
+              <button
+                onClick={handleQuickBook}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:shadow-lg transition"
+              >
+                Book New Appointment
+              </button>
+            </div>
+
+            {loading ? (
           <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-blue-600 mb-4" />
+                <p className="text-gray-600">Loading appointments...</p>
+              </div>
+            ) : appointments.length > 0 ? (
+              <div className="space-y-4">
+                {appointments.map((appt) => (
+                  <div key={appt.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg">
+                          <Calendar className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{appt.doctor}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{formatDatetime(appt.datetime)}</p>
+                          <div className="flex items-center gap-3 mt-2">
+                            <span className={`text-xs font-medium px-3 py-1 rounded-full ${
+                              appt.status === 'confirmed' || appt.status === 'completed' 
+                                ? 'bg-green-100 text-green-700'
+                                : appt.status === 'cancelled'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {appt.status}
+                            </span>
+                            <span className="text-xs text-gray-500 px-3 py-1 bg-gray-100 rounded-full">
+                              {appt.type || 'in-person'}
+                            </span>
+                          </div>
+                          {appt.symptoms && (
+                            <p className="text-sm text-gray-700 mt-2">Symptoms: {appt.symptoms}</p>
+                          )}
+                          {appt.notes && (
+                            <p className="text-sm text-gray-600 mt-1 italic">{appt.notes}</p>
+                          )}
+                        </div>
+                      </div>
+                      {(appt.status === 'confirmed' || appt.status === 'booked') && (
+                        <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:shadow-lg transition">
+                          Join Call
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
             <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Appointments</h3>
-            <p className="text-gray-600">Manage all your healthcare appointments</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Appointments</h3>
+                <p className="text-gray-600 mb-4">You don't have any appointments scheduled.</p>
+                <button
+                  onClick={handleQuickBook}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:shadow-lg transition"
+                >
+                  Book Your First Appointment
+                </button>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'prescriptions' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Prescriptions</h2>
+
+            {loading ? (
           <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-blue-600 mb-4" />
+                <p className="text-gray-600">Loading prescriptions...</p>
+              </div>
+            ) : prescriptions.length > 0 ? (
+              <div className="space-y-4">
+                {prescriptions.map((presc) => (
+                  <div key={presc.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{presc.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">Prescribed by {presc.doctor}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Issued: {formatDatetime(presc.issuedOn)} | 
+                          {presc.validUntil && ` Valid until: ${formatDatetime(presc.validUntil)}`}
+                        </p>
+                        {presc.diagnosis && (
+                          <p className="text-sm text-gray-700 mt-2">
+                            <span className="font-medium">Diagnosis:</span> {presc.diagnosis}
+                          </p>
+                        )}
+                      </div>
+                      <span className={`text-xs font-medium px-3 py-1 rounded-full ${
+                        presc.status === 'active' 
+                          ? 'bg-green-100 text-green-700'
+                          : presc.status === 'expired'
+                          ? 'bg-gray-100 text-gray-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {presc.status}
+                      </span>
+                    </div>
+
+                    {presc.medicines && presc.medicines.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-3">Medications:</h4>
+                        <div className="space-y-2">
+                          {presc.medicines.map((med: any, idx: number) => (
+                            <div key={idx} className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+                              <div>
+                                <p className="font-medium text-gray-900">{med.name}</p>
+                                <p className="text-sm text-gray-600">{med.dose} • {med.schedule}</p>
+                                {med.adherence !== undefined && (
+                                  <div className="mt-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs text-gray-500">Adherence:</span>
+                                      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
+                                        <div 
+                                          className={`h-2 rounded-full ${
+                                            med.adherence >= 90 ? 'bg-green-500' : med.adherence >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                                          }`}
+                                          style={{ width: `${med.adherence}%` }}
+                                        ></div>
+                                      </div>
+                                      <span className="text-xs font-medium text-gray-700">{med.adherence}%</span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="mt-4 flex gap-2">
+                      <button
+                        onClick={() => requestDeliveryFor(presc)}
+                        className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition"
+                      >
+                        Request Delivery
+                      </button>
+                      <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
             <Pill className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Prescriptions</h3>
-            <p className="text-gray-600">View and manage all your prescriptions</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Prescriptions</h3>
+                <p className="text-gray-600">You don't have any active prescriptions.</p>
+              </div>
+            )}
           </div>
         )}
       </div>

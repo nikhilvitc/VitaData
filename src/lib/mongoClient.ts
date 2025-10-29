@@ -1,18 +1,43 @@
-import { MongoClient, Db } from 'mongodb';
+// MongoDB client - Browser-safe with lazy loading
+// Note: MongoDB driver requires Node.js and cannot run in browsers
+// This will always fail in browser and should fallback to mock data
 
-// MongoDB connection string from environment variables
-const MONGODB_URI = import.meta.env.VITE_MONGODB_URI as string;
-const DB_NAME = import.meta.env.VITE_MONGODB_DB_NAME || 'vitadata';
+const isBrowser = typeof window !== 'undefined';
+let MongoClient: any = null;
+let Db: any = null;
 
-if (!MONGODB_URI) {
-  console.warn('MongoDB URI not found in env. Set VITE_MONGODB_URI in your .env file');
+// Lazy load MongoDB only if not in browser
+async function loadMongoDB() {
+  if (isBrowser) {
+    throw new Error('MongoDB cannot be used in browser. Use API endpoints or mock data.');
+  }
+  
+  if (!MongoClient) {
+    try {
+      const mongodb = await import('mongodb');
+      MongoClient = mongodb.MongoClient;
+      Db = mongodb.Db;
+    } catch (error) {
+      throw new Error('MongoDB package not available. Use mock data instead.');
+    }
+  }
 }
 
-let client: MongoClient | null = null;
-let clientPromise: Promise<MongoClient> | null = null;
+// MongoDB connection string from environment variables
+const MONGODB_URI = (import.meta as any).env.VITE_MONGODB_URI as string;
+const DB_NAME = (import.meta as any).env.VITE_MONGODB_DB_NAME || 'vitadata';
+
+let client: any = null;
+let clientPromise: Promise<any> | null = null;
 
 // Create a singleton MongoDB client
-function getMongoClient(): Promise<MongoClient> {
+async function getMongoClient(): Promise<any> {
+  if (isBrowser) {
+    throw new Error('MongoDB cannot be used in browser environment');
+  }
+
+  await loadMongoDB();
+
   if (clientPromise) {
     return clientPromise;
   }
@@ -28,15 +53,24 @@ function getMongoClient(): Promise<MongoClient> {
 }
 
 // Get database instance
-export async function getDatabase(): Promise<Db> {
+export async function getDatabase(): Promise<any> {
+  if (isBrowser) {
+    throw new Error('MongoDB cannot be used in browser environment');
+  }
+  
+  await loadMongoDB();
   const client = await getMongoClient();
   return client.db(DB_NAME);
 }
 
 // Helper function to get a collection
-export async function getCollection<T = any>(collectionName: string) {
+export async function getCollection<T = any>(collectionName: string): Promise<any> {
+  if (isBrowser) {
+    throw new Error('MongoDB cannot be used in browser environment');
+  }
+  
   const db = await getDatabase();
-  return db.collection<T>(collectionName);
+  return db.collection(collectionName);
 }
 
 // Export the client getter for direct access if needed

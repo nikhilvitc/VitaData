@@ -1,18 +1,67 @@
 import React, { useEffect, useState } from 'react'
-import { Users, Heart, Bell, TrendingUp, AlertCircle, Phone, Calendar, Activity, Pill, FileText, Shield, MessageCircle, Home, User, Settings } from 'lucide-react'
+import { Users, Heart, Bell, TrendingUp, AlertCircle, Phone, Calendar, Activity, Pill, FileText, Shield, MessageCircle, Home, User, Settings, Loader2 } from 'lucide-react'
 import VitaBot from '../components/VitaBot'
 import { getPatients, getAppointments, formatDatetime, Patient, Appointment } from '../lib/mockData'
+import { dataFetcher } from '../lib/dataFetcher'
 
 export default function GuardianDashboard(){
   const [activeTab, setActiveTab] = useState('overview')
+  const [loading, setLoading] = useState(true)
   const [patients, setPatients] = useState<Patient[]>([])
   const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [vitalsHistory, setVitalsHistory] = useState<any[]>([])
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [guardian, setGuardian] = useState<any>(null)
 
   useEffect(() => {
-    const p = getPatients()
-    setPatients(p)
-    const all = getAppointments()
-    setAppointments(all)
+    async function loadData() {
+      setLoading(true)
+      try {
+        // Get all patients (guardian can monitor multiple patients)
+        const allPatients = await dataFetcher.getAllPatientsForDoctor()
+        setPatients(allPatients)
+        
+        // Get all appointments for linked patients
+        const allAppts = await dataFetcher.getAllAppointments()
+        setAppointments(allAppts)
+        
+        // Get vitals history for all patients
+        const allVitals: any[] = []
+        for (const patient of allPatients.slice(0, 3)) {
+          try {
+            const vitals = await dataFetcher.getPatientVitals(patient.id)
+            allVitals.push(...vitals.map(v => ({ ...v, patientId: patient.id, patientName: patient.name })))
+          } catch {}
+        }
+        setVitalsHistory(allVitals)
+        
+        // Get notifications (would use guardian userId in real app)
+        const notifs = await dataFetcher.getUserNotifications('guardian-001')
+        setNotifications(notifs)
+        
+        // Set guardian info
+        setGuardian({
+          name: 'Neha Sharma',
+          email: 'neha.sharma@example.com',
+          phone: '+91-9876543221',
+          linkedPatientsCount: allPatients.length
+        })
+      } catch (error) {
+        console.error('Error loading data:', error)
+        // Fallback to mock data
+        const p = getPatients()
+        setPatients(p)
+        setAppointments(getAppointments())
+        setGuardian({
+          name: 'Neha Sharma',
+          email: 'neha.sharma@example.com',
+          phone: '+91-9876543221'
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
   }, [])
 
   function quickContactDoctor(pid: string) {
@@ -360,29 +409,260 @@ export default function GuardianDashboard(){
         )}
 
         {activeTab === 'patients' && (
-          <div className="text-center py-20">
-            <Users className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Linked Patients Management</h3>
-            <p className="text-gray-600">Manage all your linked patient profiles</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Linked Patients</h2>
+              <button className="px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition">
+                Link New Patient
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-emerald-600 mb-4" />
+                <p className="text-gray-600">Loading patients...</p>
+              </div>
+            ) : patients.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {patients.map((patient) => (
+                  <div key={patient.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                        {patient.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900">{patient.name}</h3>
+                        <p className="text-sm text-gray-600">ID: {patient.healthId}</p>
+                        <p className="text-xs text-gray-500">Age: {patient.age} years</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+                        <span className="text-xs font-medium text-gray-600">Stable</span>
+                      </div>
+                    </div>
+
+                    {patient.vitals && (
+                      <div className="grid grid-cols-3 gap-3 mb-4">
+                        <div className="bg-gradient-to-br from-red-50 to-pink-50 p-3 rounded-lg border border-red-100">
+                          <div className="text-xs text-gray-500">Blood Pressure</div>
+                          <div className="font-semibold text-gray-900">{patient.vitals.bp || '120/80'}</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-3 rounded-lg border border-purple-100">
+                          <div className="text-xs text-gray-500">Blood Sugar</div>
+                          <div className="font-semibold text-gray-900">{patient.vitals.sugar || '95'} mg/dL</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-3 rounded-lg border border-orange-100">
+                          <div className="text-xs text-gray-500">Temperature</div>
+                          <div className="font-semibold text-gray-900">{patient.vitals.temp || '98.4'}°F</div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 pt-4 border-t border-gray-200">
+                      <button 
+                        onClick={() => quickContactDoctor(patient.id)} 
+                        className="flex-1 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2"
+                      >
+                        <Phone className="w-4 h-4" />
+                        Contact Doctor
+                      </button>
+                      <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                <Users className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Linked Patients</h3>
+                <p className="text-gray-600 mb-4">You haven't linked any patient profiles yet.</p>
+                <button className="px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition">
+                  Link Your First Patient
+                </button>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'health' && (
-          <div className="text-center py-20">
-            <Heart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Health Monitoring</h3>
-            <p className="text-gray-600">Detailed health tracking and trends</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Health Monitoring</h2>
+
+            {loading ? (
+              <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-emerald-600 mb-4" />
+                <p className="text-gray-600">Loading health data...</p>
+              </div>
+            ) : vitalsHistory.length > 0 ? (
+              <>
+                {/* Vitals History by Patient */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-emerald-600" />
+                    Recent Vitals History
+                  </h3>
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">BP</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sugar</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Temp</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pulse</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recorded By</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {vitalsHistory.slice(0, 20).map((vital, idx) => (
+                            <tr key={idx} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                                    {vital.patientName?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'P'}
+                                  </div>
+                                  <span className="text-sm font-medium text-gray-900">{vital.patientName || 'Unknown'}</span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {formatDatetime(vital.recordedAt || new Date().toISOString())}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{vital.bp}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.sugar} mg/dL</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.temp}°F</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.pulse} bpm</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{vital.weight} kg</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{vital.recordedBy || 'self'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Health Trends Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {patients.slice(0, 3).map((patient) => {
+                    const patientVitals = vitalsHistory.filter(v => v.patientId === patient.id)
+                    const latestVital = patientVitals[0]
+                    
+                    return (
+                      <div key={patient.id} className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl p-6 text-white">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-lg font-semibold">{patient.name}</h4>
+                          <Heart className="w-6 h-6 text-white/80" />
+                        </div>
+                        {latestVital && (
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-emerald-100 text-sm">Blood Pressure</span>
+                              <span className="font-bold">{latestVital.bp}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-emerald-100 text-sm">Blood Sugar</span>
+                              <span className="font-bold">{latestVital.sugar} mg/dL</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-emerald-100 text-sm">Last Recorded</span>
+                              <span className="text-xs">{formatDatetime(latestVital.recordedAt).split(',')[0]}</span>
+                            </div>
+                          </div>
+                        )}
+                        <button className="w-full mt-4 px-4 py-2 bg-white text-emerald-600 font-medium rounded-lg hover:bg-white/90 transition">
+                          View Full History
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                <Heart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Health Data</h3>
+                <p className="text-gray-600">Health monitoring data will appear here once patients start recording vitals.</p>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'notifications' && (
-          <div className="text-center py-20">
-            <Bell className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Notifications Center</h3>
-            <p className="text-gray-600">All alerts and reminders in one place</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Notifications</h2>
+              <button className="px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition">
+                Mark All as Read
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-emerald-600 mb-4" />
+                <p className="text-gray-600">Loading notifications...</p>
+              </div>
+            ) : notifications.length > 0 ? (
+              <div className="space-y-4">
+                {notifications.map((notif) => (
+                  <div key={notif.id} className={`bg-white rounded-xl p-6 shadow-sm border ${
+                    notif.isRead ? 'border-gray-100' : 'border-emerald-200 bg-emerald-50/30'
+                  }`}>
+                    <div className="flex items-start gap-4">
+                      <div className={`p-3 rounded-lg ${
+                        notif.type === 'medication' ? 'bg-red-100' :
+                        notif.type === 'appointment' ? 'bg-blue-100' :
+                        notif.type === 'lab_result' ? 'bg-green-100' :
+                        'bg-gray-100'
+                      }`}>
+                        {notif.type === 'medication' && <Pill className="w-5 h-5 text-red-600" />}
+                        {notif.type === 'appointment' && <Calendar className="w-5 h-5 text-blue-600" />}
+                        {notif.type === 'lab_result' && <FileText className="w-5 h-5 text-green-600" />}
+                        {notif.type === 'general' && <Bell className="w-5 h-5 text-gray-600" />}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{notif.title}</h3>
+                            <p className="text-sm text-gray-600 mt-1">{notif.message}</p>
+                            <p className="text-xs text-gray-500 mt-2">
+                              {formatDatetime(notif.createdAt || new Date().toISOString())}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {!notif.isRead && (
+                              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                            )}
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              notif.priority === 'high' ? 'bg-red-100 text-red-700' :
+                              notif.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {notif.priority}
+                            </span>
+                          </div>
+                        </div>
+                        {notif.actionUrl && (
+                          <button className="mt-3 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
+                            View Details
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                <Bell className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Notifications</h3>
+                <p className="text-gray-600">You're all caught up! No new notifications.</p>
+              </div>
+            )}
           </div>
         )}
         </div>

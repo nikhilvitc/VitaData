@@ -1,16 +1,61 @@
 import React, { useEffect, useState } from 'react'
-import { Users, Calendar, Clock, CheckCircle, AlertCircle, TrendingUp, Stethoscope, FileText, Video, Phone, Mail, MapPin, Activity, Home, User, Settings } from 'lucide-react'
+import { Users, Calendar, Clock, CheckCircle, AlertCircle, TrendingUp, Stethoscope, FileText, Video, Phone, Mail, MapPin, Activity, Home, User, Settings, Loader2 } from 'lucide-react'
 import VitaBot from '../components/VitaBot'
 import { getAppointments, getPatients, formatDatetime, Appointment, Patient } from '../lib/mockData'
+import { dataFetcher } from '../lib/dataFetcher'
+import mongoApi from '../lib/mongoApi'
 
 export default function DoctorDashboard(){
   const [activeTab, setActiveTab] = useState('overview')
+  const [loading, setLoading] = useState(true)
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [patients, setPatients] = useState<Patient[]>([])
+  const [doctor, setDoctor] = useState<any>(null)
 
   useEffect(() => {
-    setAppointments(getAppointments())
-    setPatients(getPatients())
+    async function loadData() {
+      setLoading(true)
+      try {
+        // Get doctor (in real app, get from auth)
+        const allPatients = await dataFetcher.getAllPatientsForDoctor()
+        const allAppointments = await dataFetcher.getAllAppointments()
+        setPatients(allPatients)
+        setAppointments(allAppointments)
+        
+        // Get first doctor for demo (will fail in browser and use fallback)
+        let doctors: any[] = []
+        try {
+          doctors = await mongoApi.doctor.findAll()
+        } catch {
+          // MongoDB not available in browser, use fallback
+        }
+        if (doctors.length > 0) {
+          setDoctor(doctors[0])
+        } else {
+          // Fallback mock doctor
+          setDoctor({
+            name: 'Dr. Ananya Rao',
+            specialization: 'Cardiology',
+            hospital: 'Apollo Hospital, Bangalore',
+            phone: '+91 98765 43210',
+            email: 'dr.ananya.rao@hospital.com'
+          })
+        }
+      } catch (error) {
+        console.error('Error loading data:', error)
+        // Fallback to mock data
+        setAppointments(getAppointments())
+        setPatients(getPatients())
+        setDoctor({
+          name: 'Dr. Ananya Rao',
+          specialization: 'Cardiology',
+          hospital: 'Apollo Hospital, Bangalore'
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
   }, [])
 
   function approve(apptId: string) {
@@ -338,29 +383,208 @@ export default function DoctorDashboard(){
         )}
 
         {activeTab === 'patients' && (
-          <div className="text-center py-20">
-            <Users className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Patient Management</h3>
-            <p className="text-gray-600">View and manage all your patients</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Patient Management</h2>
+            
+            {loading ? (
+              <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-purple-600 mb-4" />
+                <p className="text-gray-600">Loading patients...</p>
+              </div>
+            ) : patients.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {patients.map((patient) => (
+                  <div key={patient.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
+                        {patient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900">{patient.name}</h3>
+                        <p className="text-xs text-gray-500 mt-1">ID: {patient.healthId}</p>
+                        <p className="text-xs text-gray-500">Age: {patient.age} years</p>
+                        {patient.vitals && (
+                          <div className="mt-3 space-y-1">
+                            <p className="text-xs text-gray-600">
+                              <span className="font-medium">BP:</span> {patient.vitals.bp || 'N/A'}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              <span className="font-medium">Sugar:</span> {patient.vitals.sugar || 'N/A'} mg/dL
+                            </p>
+                          </div>
+                        )}
+                        <button className="mt-4 w-full px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition">
+                          View Profile
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                <Users className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Patients</h3>
+                <p className="text-gray-600">You don't have any assigned patients yet.</p>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'calendar' && (
-          <div className="text-center py-20">
-            <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Calendar View</h3>
-            <p className="text-gray-600">Manage your appointments and schedule</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Calendar View</h2>
+            
+            {loading ? (
+              <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-purple-600 mb-4" />
+                <p className="text-gray-600">Loading appointments...</p>
+              </div>
+            ) : appointments.length > 0 ? (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-6">
+                  <div className="space-y-4">
+                    {appointments.map((appt: any) => {
+                      const patient = patients.find(p => p.id === appt.patientId)
+                      const patientName = patient?.name || appt.patientName || 'Unknown Patient'
+                      return (
+                        <div key={appt.id} className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
+                          <div className="p-3 bg-white rounded-lg shadow-sm">
+                            <Calendar className="w-5 h-5 text-purple-600" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900">{patientName}</p>
+                            <p className="text-sm text-gray-600">{formatDatetime(appt.datetime)}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                                appt.status === 'confirmed' || appt.status === 'completed'
+                                  ? 'bg-green-100 text-green-700'
+                                  : appt.status === 'cancelled'
+                                  ? 'bg-red-100 text-red-700'
+                                  : 'bg-yellow-100 text-yellow-700'
+                              }`}>
+                                {appt.status}
+                              </span>
+                              <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
+                                {appt.type || 'in-person'}
+                              </span>
+                            </div>
+                            {appt.symptoms && (
+                              <p className="text-xs text-gray-600 mt-1">Symptoms: {appt.symptoms}</p>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            {(appt.status === 'pending' || appt.status === 'booked') && (
+                              <button
+                                onClick={() => approve(appt.id)}
+                                className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition"
+                              >
+                                Confirm
+                              </button>
+                            )}
+                            <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                              <Video className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
+                <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Appointments</h3>
+                <p className="text-gray-600">You don't have any scheduled appointments.</p>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'profile' && (
-          <div className="text-center py-20">
-            <User className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Professional Profile</h3>
-            <p className="text-gray-600">Edit your professional information and credentials</p>
-            <p className="text-sm text-gray-400 mt-4">Coming soon...</p>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Professional Profile</h2>
+            
+            {loading ? (
+              <div className="text-center py-20">
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-purple-600 mb-4" />
+                <p className="text-gray-600">Loading profile...</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                {doctor ? (
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-6">
+                      <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        {doctor.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2) || 'DR'}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-gray-900">{doctor.name || 'Dr. Unknown'}</h3>
+                        <p className="text-purple-600 font-medium mt-1">{doctor.specialization || 'General Medicine'}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">License Number</label>
+                        <p className="text-gray-900 mt-1">{doctor.licenseNumber || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Qualification</label>
+                        <p className="text-gray-900 mt-1">{doctor.qualification || 'MBBS'}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Hospital</label>
+                        <p className="text-gray-900 mt-1 flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-gray-400" />
+                          {doctor.hospital || 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Experience</label>
+                        <p className="text-gray-900 mt-1">{doctor.experience || doctor.yearsOfExperience || '0'} years</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Email</label>
+                        <p className="text-gray-900 mt-1 flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-gray-400" />
+                          {doctor.email || 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Phone</label>
+                        <p className="text-gray-900 mt-1 flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-gray-400" />
+                          {doctor.phone || 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Consultation Fee</label>
+                        <p className="text-gray-900 mt-1">₹{doctor.consultationFee || '0'}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Available Days</label>
+                        <p className="text-gray-900 mt-1">
+                          {doctor.availableDays?.join(', ') || 'Monday - Saturday'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-gray-200">
+                      <button className="px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                        Edit Profile
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <User className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-600">Profile information not available</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
