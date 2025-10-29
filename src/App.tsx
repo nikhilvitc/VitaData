@@ -24,6 +24,43 @@ export default function App() {
     )
   }
 
+  // Login routes
+  if (path === '/login/patient') {
+    const PatientLogin = lazy(() => import('./pages/PatientLogin'))
+    return (
+      <Suspense fallback={<div className="container py-12">Loading…</div>}>
+        <PatientLogin />
+      </Suspense>
+    )
+  }
+
+  if (path === '/login/doctor') {
+    const DoctorLogin = lazy(() => import('./pages/DoctorLogin'))
+    return (
+      <Suspense fallback={<div className="container py-12">Loading…</div>}>
+        <DoctorLogin />
+      </Suspense>
+    )
+  }
+
+  if (path === '/login/guardian') {
+    const GuardianLogin = lazy(() => import('./pages/GuardianLogin'))
+    return (
+      <Suspense fallback={<div className="container py-12">Loading…</div>}>
+        <GuardianLogin />
+      </Suspense>
+    )
+  }
+
+  if (path === '/login/pharmacy') {
+    const PharmacyLogin = lazy(() => import('./pages/PharmacyLogin'))
+    return (
+      <Suspense fallback={<div className="container py-12">Loading…</div>}>
+        <PharmacyLogin />
+      </Suspense>
+    )
+  }
+
   // Dashboard routes: /patient, /guardian, /doctor, /pharmacy
   if (path === '/patient') {
     const Patient = lazy(() => import('./pages/PatientDashboard'))

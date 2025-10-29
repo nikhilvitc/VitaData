@@ -29,13 +29,13 @@ export default function PharmacyDashboard(){
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-amber-100">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Pharmacy Hub</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Pharmacy Hub</h1>
               <p className="text-sm text-gray-500 mt-1">City Pharmacy - Delivery Management</p>
             </div>
             <div className="flex items-center gap-4">
@@ -48,7 +48,7 @@ export default function PharmacyDashboard(){
                   <p className="text-sm font-semibold text-gray-900">City Pharmacy</p>
                   <p className="text-xs text-gray-500">Manager Dashboard</p>
                 </div>
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center text-white font-semibold">
                   <Pill className="w-5 h-5" />
                 </div>
               </div>
@@ -65,7 +65,7 @@ export default function PharmacyDashboard(){
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 font-medium text-sm transition-all ${
                     activeTab === tab.id
-                      ? 'text-purple-600 border-b-2 border-purple-600 -mb-px'
+                      ? 'text-orange-600 border-b-2 border-orange-600 -mb-px'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -84,7 +84,7 @@ export default function PharmacyDashboard(){
             {/* Quick Stats */}
             <div className="mb-8">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-purple-600" />
+                <TrendingUp className="w-5 h-5 text-orange-600" />
                 Business Metrics
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -123,10 +123,10 @@ export default function PharmacyDashboard(){
 
                 <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="p-2 bg-purple-50 rounded-lg">
-                      <TrendingUp className="w-5 h-5 text-purple-500" />
+                    <div className="p-2 bg-orange-50 rounded-lg">
+                      <TrendingUp className="w-5 h-5 text-orange-500" />
                     </div>
-                    <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">+15%</span>
+                    <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded">+15%</span>
                   </div>
                   <p className="text-2xl font-bold text-gray-900">₹{Math.floor(orders.length * 450)}</p>
                   <p className="text-sm text-gray-500 mt-1">Today's Revenue</p>
@@ -141,7 +141,7 @@ export default function PharmacyDashboard(){
                 {/* Active Orders */}
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Package className="w-5 h-5 text-purple-600" />
+                    <Package className="w-5 h-5 text-orange-600" />
                     Active Orders
                   </h2>
                   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">

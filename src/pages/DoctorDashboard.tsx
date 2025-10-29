@@ -28,13 +28,13 @@ export default function DoctorDashboard(){
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-indigo-100">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Doctor Dashboard</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Doctor Dashboard</h1>
               <p className="text-sm text-gray-500 mt-1">Dr. Ananya Rao • Cardiologist</p>
             </div>
             <div className="flex items-center gap-4">
@@ -47,7 +47,7 @@ export default function DoctorDashboard(){
                   <p className="text-sm font-semibold text-gray-900">Dr. Ananya Rao</p>
                   <p className="text-xs text-gray-500">Cardiologist</p>
                 </div>
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
                   AR
                 </div>
               </div>
@@ -64,7 +64,7 @@ export default function DoctorDashboard(){
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 font-medium text-sm transition-all ${
                     activeTab === tab.id
-                      ? 'text-emerald-600 border-b-2 border-emerald-600 -mb-px'
+                      ? 'text-purple-600 border-b-2 border-purple-600 -mb-px'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -83,7 +83,7 @@ export default function DoctorDashboard(){
             {/* Quick Stats */}
             <div className="mb-8">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                    <TrendingUp className="w-5 h-5 text-purple-600" />
                 Performance Metrics
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -140,10 +140,10 @@ export default function DoctorDashboard(){
                 {/* Doctor Profile Card */}
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Stethoscope className="w-5 h-5 text-emerald-600" />
+                    <Stethoscope className="w-5 h-5 text-purple-600" />
                     Professional Profile
                   </h2>
-                  <div className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+                  <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
                     <div className="flex items-start gap-4">
                       <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
                         <Stethoscope className="w-8 h-8 text-white" />
@@ -196,7 +196,7 @@ export default function DoctorDashboard(){
                                 <span className="inline-block mt-1 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{a.status}</span>
                               </div>
                               <div className="flex gap-2">
-                                <button onClick={() => approve(a.id)} className="p-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition" title="Confirm">
+                                <button onClick={() => approve(a.id)} className="p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition" title="Confirm">
                                   <CheckCircle className="w-5 h-5" />
                                 </button>
                                 <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" title="Start Video Call">
@@ -239,7 +239,7 @@ export default function DoctorDashboard(){
                                 </div>
                               </div>
                               <div className="flex gap-2">
-                                <button onClick={() => approve(a.id)} className="px-3 py-1 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition">
+                                <button onClick={() => approve(a.id)} className="px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition">
                                   Confirm
                                 </button>
                                 <button onClick={() => alert('Reschedule flow (todo)')} className="px-3 py-1 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition">
@@ -275,7 +275,7 @@ export default function DoctorDashboard(){
                       </div>
                       <button 
                         onClick={() => alert('Open patient list (todo)')} 
-                        className="w-full px-4 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition"
+                        className="w-full px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition"
                       >
                         View All Patients
                       </button>

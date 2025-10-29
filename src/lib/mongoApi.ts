@@ -261,11 +261,121 @@ export const healthRecordApi = {
   },
 };
 
+// Vitals History operations
+export const vitalsHistoryApi = {
+  async findByPatient(patientId: ObjectId | string) {
+    const collection = await getCollection<any>('vitals_history');
+    const query = typeof patientId === 'string' ? { patientId } : { patientId: patientId };
+    return await collection
+      .find(query)
+      .sort({ recordedAt: -1 })
+      .toArray();
+  },
+  
+  async getLatest(patientId: ObjectId | string) {
+    const collection = await getCollection<any>('vitals_history');
+    const query = typeof patientId === 'string' ? { patientId } : { patientId: patientId };
+    return await collection.findOne(query, { sort: { recordedAt: -1 } });
+  },
+};
+
+// Lab Reports operations
+export const labReportApi = {
+  async findByPatient(patientId: ObjectId | string) {
+    const collection = await getCollection<any>('lab_reports');
+    const query = typeof patientId === 'string' ? { patientId } : { patientId: patientId };
+    return await collection
+      .find(query)
+      .sort({ testDate: -1 })
+      .toArray();
+  },
+};
+
+// Notifications operations
+export const notificationApi = {
+  async findByUserId(userId: ObjectId | string) {
+    const collection = await getCollection<any>('notifications');
+    const query = typeof userId === 'string' ? { userId } : { userId: userId };
+    return await collection
+      .find(query)
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .toArray();
+  },
+  
+  async getUnreadCount(userId: ObjectId | string) {
+    const collection = await getCollection<any>('notifications');
+    const query: any = typeof userId === 'string' ? { userId, isRead: false } : { userId: userId, isRead: false };
+    return await collection.countDocuments(query);
+  },
+};
+
+// Orders operations
+export const orderApi = {
+  async findByPatient(patientId: ObjectId | string) {
+    const collection = await getCollection<any>('orders');
+    const query = typeof patientId === 'string' ? { patientId } : { patientId: patientId };
+    return await collection
+      .find(query)
+      .sort({ orderDate: -1 })
+      .toArray();
+  },
+  
+  async findByPharmacy(pharmacyId: ObjectId | string) {
+    const collection = await getCollection<any>('orders');
+    const query = typeof pharmacyId === 'string' ? { pharmacyId } : { pharmacyId: pharmacyId };
+    return await collection
+      .find(query)
+      .sort({ orderDate: -1 })
+      .toArray();
+  },
+};
+
+// Doctor operations
+export const doctorApi = {
+  async findAll() {
+    const collection = await getCollection<any>('doctors');
+    return await collection.find({}).toArray();
+  },
+  
+  async findById(id: ObjectId | string) {
+    const collection = await getCollection<any>('doctors');
+    const query = typeof id === 'string' ? { _id: id } : { _id: id };
+    return await collection.findOne(query);
+  },
+  
+  async findByUserId(userId: ObjectId | string) {
+    const collection = await getCollection<any>('doctors');
+    const query = typeof userId === 'string' ? { userId } : { userId: userId };
+    return await collection.findOne(query);
+  },
+};
+
+// Patient extended operations
+export const patientApiExtended = {
+  ...patientApi,
+  async findAll() {
+    const collection = await getCollection<Patient>('patients');
+    return await collection.find({}).toArray();
+  },
+  
+  async findById(id: ObjectId | string) {
+    const collection = await getCollection<Patient>('patients');
+    const query = typeof id === 'string' ? { _id: id } : { _id: id };
+    return await collection.findOne(query);
+  },
+};
+
 export default {
   user: userApi,
-  patient: patientApi,
+  patient: patientApiExtended,
   prescription: prescriptionApi,
   appointment: appointmentApi,
   healthRecord: healthRecordApi,
+  vitalsHistory: vitalsHistoryApi,
+  labReport: labReportApi,
+  notification: notificationApi,
+  order: orderApi,
+  doctor: doctorApi,
 };
 

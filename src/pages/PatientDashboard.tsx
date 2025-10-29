@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { Activity, Calendar, Pill, Bell, TrendingUp, Heart, Clock, MessageSquare, FileText, ChevronRight, AlertCircle, User, Home, History, Settings } from 'lucide-react'
+import { Activity, Calendar, Pill, Bell, TrendingUp, Heart, Clock, MessageSquare, FileText, ChevronRight, AlertCircle, User, Home, History, Settings, Loader2 } from 'lucide-react'
 import VitaBot from '../components/VitaBot'
 import { getPatients, getPrescriptions, getAppointments, addAppointment, addOrder, formatDatetime } from '../lib/mockData'
+import { dataFetcher } from '../lib/dataFetcher'
 
 export default function PatientDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
   const [patient, setPatient] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [appointments, setAppointments] = useState<any[]>([])
   const [prescriptions, setPrescriptions] = useState<any[]>([])
+  const [vitalsHistory, setVitalsHistory] = useState<any[]>([])
+  const [labReports, setLabReports] = useState<any[]>([])
+  const [notifications, setNotifications] = useState<any[]>([])
   const [adherenceData, setAdherenceData] = useState<Array<{day:string;value:number}>>([
     { day: 'Mon', value: 100 },
     { day: 'Tue', value: 100 },
@@ -29,25 +34,66 @@ export default function PatientDashboard() {
   ])
 
   useEffect(() => {
-    const p = getPatients()[0]
-    setPatient(p)
-    setAppointments(getAppointments().filter(a => a.patientId === (p?.id)))
-    const pres = getPrescriptions(p?.id)
-    setPrescriptions(pres)
+    async function loadData() {
+      setLoading(true)
+      try {
+        // Get first patient (in real app, get from auth)
+        const patients = await dataFetcher.getPatients()
+        const p = patients[0]
+        if (p) {
+          setPatient(p)
+          const patientId = p.id
 
-    if (pres.length && pres[0].medicines) {
-      const vals = pres[0].medicines.map((m:any, i:number) => ({ day: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i % 7], value: m.adherence ?? 90 }))
-      setAdherenceData(vals)
-    }
+          // Load all data
+          const [appts, prescs, vitals, labs, notifs] = await Promise.all([
+            dataFetcher.getPatientAppointments(patientId),
+            dataFetcher.getPatientPrescriptions(patientId),
+            dataFetcher.getPatientVitals(patientId),
+            dataFetcher.getPatientLabReports(patientId),
+            dataFetcher.getUserNotifications(patientId || '')
+          ])
 
-    if (p?.vitals) {
-      const now = new Date()
-      const trends = Array.from({length:7}).map((_,i) => {
-        const d = new Date(now.getTime() - (6-i)*24*3600*1000)
-        return { date: `${d.getMonth()+1}/${d.getDate()}`, bp: parseInt(((p.vitals?.bp) || '120/80').split('/')[0],10) || 120, sugar: p.vitals?.sugar || 95 }
-      })
-      setHealthTrends(trends)
+          setAppointments(appts)
+          setPrescriptions(prescs)
+          setVitalsHistory(vitals)
+          setLabReports(labs)
+          setNotifications(notifs)
+
+          // Update health trends from vitals history
+          if (vitals.length > 0) {
+            const recentVitals = vitals.slice(0, 7).reverse()
+            const trends = recentVitals.map((v: any, i: number) => {
+              const date = new Date(v.recordedAt || Date.now())
+              return {
+                date: `${date.getMonth() + 1}/${date.getDate()}`,
+                bp: parseInt((v.bp || '120/80').split('/')[0], 10) || 120,
+                sugar: v.sugar || 95
+              }
+            })
+            if (trends.length > 0) setHealthTrends(trends)
+          }
+
+          // Update adherence data
+          if (prescs.length && prescs[0].medicines) {
+            const vals = prescs[0].medicines.map((m: any, i: number) => ({
+              day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i % 7],
+              value: m.adherence ?? 90
+            }))
+            setAdherenceData(vals)
+          }
+        }
+      } catch (error) {
+        console.error('Error loading data:', error)
+        // Fallback to mock data
+        const p = getPatients()[0]
+        setPatient(p)
+        setAppointments(getAppointments().filter(a => a.patientId === (p?.id)))
+        setPrescriptions(getPrescriptions(p?.id))
+      } finally {
+        setLoading(false)
+      }
     }
+    loadData()
   }, [])
 
   const avgAdherence = Math.round(adherenceData.reduce((sum, d) => sum + d.value, 0) / adherenceData.length)
@@ -72,7 +118,7 @@ export default function PatientDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-blue-100">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">

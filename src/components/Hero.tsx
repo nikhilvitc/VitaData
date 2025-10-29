@@ -3,10 +3,10 @@ import { motion } from 'framer-motion'
 import { User, Users, Stethoscope, Pill, ArrowRight, CheckCircle, Calendar, Shield, Zap, Heart } from 'lucide-react'
 
 const categories = [
-  { title: 'Patients', icon: User, color: 'from-sky-500 to-blue-600', borderColor: 'border-sky-400', route: '/patient' },
-  { title: 'Guardians', icon: Users, color: 'from-amber-500 to-orange-600', borderColor: 'border-amber-400', route: '/guardian' },
-  { title: 'Doctors', icon: Stethoscope, color: 'from-emerald-500 to-green-600', borderColor: 'border-emerald-400', route: '/doctor' },
-  { title: 'Pharmacies', icon: Pill, color: 'from-purple-500 to-indigo-600', borderColor: 'border-purple-400', route: '/pharmacy' }
+  { title: 'Patients', icon: User, color: 'from-sky-500 to-blue-600', borderColor: 'border-sky-400', route: '/login/patient' },
+  { title: 'Guardians', icon: Users, color: 'from-amber-500 to-orange-600', borderColor: 'border-amber-400', route: '/login/guardian' },
+  { title: 'Doctors', icon: Stethoscope, color: 'from-emerald-500 to-green-600', borderColor: 'border-emerald-400', route: '/login/doctor' },
+  { title: 'Pharmacies', icon: Pill, color: 'from-purple-500 to-indigo-600', borderColor: 'border-purple-400', route: '/login/pharmacy' }
 ]
 
 const features = [

@@ -30,15 +30,18 @@ export default function Admin(){
   }, [authorized])
 
   if(!authorized) return (
-    <div className="container py-12">
-      <div className="card">
-        <h3 className="text-lg font-semibold">Admin</h3>
-        <p className="text-sm text-slate-600 mt-2">Protected — enter passcode to view appointments.</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-gray-100">
+      <div className="container py-12">
+        <div className="card">
+          <h3 className="text-lg font-semibold">Admin</h3>
+          <p className="text-sm text-slate-600 mt-2">Protected — enter passcode to view appointments.</p>
+        </div>
       </div>
     </div>
   )
 
   return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-gray-100">
     <section className="py-12">
       <div className="container">
         <h3 className="text-2xl font-semibold">Appointments (Admin)</h3>
@@ -60,5 +63,6 @@ export default function Admin(){
         </div>
       </div>
     </section>
+    </div>
   )
 }

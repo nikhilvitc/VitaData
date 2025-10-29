@@ -31,13 +31,13 @@ export default function GuardianDashboard(){
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-green-100">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Guardian Portal</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Guardian Portal</h1>
               <p className="text-sm text-gray-500 mt-1">Monitor and care for your loved ones</p>
             </div>
             <div className="flex items-center gap-4">
@@ -50,7 +50,7 @@ export default function GuardianDashboard(){
                   <p className="text-sm font-semibold text-gray-900">Guardian Account</p>
                   <p className="text-xs text-gray-500">{linkedPatients.length} Linked Patients</p>
                 </div>
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
                   <Users className="w-5 h-5" />
                 </div>
         </div>
@@ -67,7 +67,7 @@ export default function GuardianDashboard(){
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 font-medium text-sm transition-all ${
                     activeTab === tab.id
-                      ? 'text-amber-600 border-b-2 border-amber-600 -mb-px'
+                      ? 'text-emerald-600 border-b-2 border-emerald-600 -mb-px'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -86,16 +86,16 @@ export default function GuardianDashboard(){
             {/* Quick Stats */}
             <div className="mb-8">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-amber-600" />
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
                 Care Overview
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="p-2 bg-amber-50 rounded-lg">
-                      <Users className="w-5 h-5 text-amber-500" />
+                    <div className="p-2 bg-emerald-50 rounded-lg">
+                      <Users className="w-5 h-5 text-emerald-500" />
                     </div>
-                    <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">Active</span>
+                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Active</span>
                   </div>
                   <p className="text-2xl font-bold text-gray-900">{linkedPatients.length}</p>
                   <p className="text-sm text-gray-500 mt-1">Linked Patients</p>
@@ -143,14 +143,14 @@ export default function GuardianDashboard(){
                 {/* Linked Patient Profiles */}
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-amber-600" />
+                    <Users className="w-5 h-5 text-emerald-600" />
                     Linked Patient Profiles
                   </h2>
                   <div className="space-y-4">
                     {linkedPatients.map((patient) => (
                       <div key={patient.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                         <div className="flex items-start gap-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                             {patient.name.split(' ').map(n => n[0]).join('')}
                           </div>
                           <div className="flex-1">
@@ -183,7 +183,7 @@ export default function GuardianDashboard(){
                             <div className="flex gap-2">
                               <button 
                                 onClick={() => quickContactDoctor(patient.id)} 
-                                className="flex-1 px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition flex items-center justify-center gap-2"
+                                className="flex-1 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2"
                               >
                                 <Phone className="w-4 h-4" />
                                 Contact Doctor
@@ -244,10 +244,10 @@ export default function GuardianDashboard(){
                 {/* Health Overview */}
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-amber-600" />
+                    <Activity className="w-5 h-5 text-emerald-600" />
                     Health Summary
                   </h2>
-                  <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl p-6 text-white shadow-lg">
+                  <div className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-2 bg-white/20 rounded-lg backdrop-blur">
                         <Activity className="w-5 h-5" />
